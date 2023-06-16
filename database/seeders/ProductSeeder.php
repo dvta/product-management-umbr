@@ -15,12 +15,18 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         Product::factory()
-            ->count(100)
+            ->count(10000)
             ->create()
             ->each(function (Product $product) {
                 $product->categories()->attach(
                     Category::inRandomOrder()->limit(rand(1, 3))->pluck('id')->toArray()
                 );
+            })->each(function (Product $product, $key) {
+                if ($key % 2 == 0){
+                    $product->images()->create([
+                        'path' => fake()->imageUrl()
+                    ]);
+                }
             });
     }
 }

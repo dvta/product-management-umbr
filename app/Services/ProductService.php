@@ -27,8 +27,9 @@ class ProductService
             })
             ->when($request->price, function ($query){
                 $query->whereBetween('price', [request()->price['min'], request()->price['max']]);
-            })
-            ->paginate(10)
+            })->with(['categories', 'images'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(1000)
             ->appends(request()->query());
     }
 
@@ -44,8 +45,7 @@ class ProductService
         if ($request->has('images')){
             foreach ($request->images as $image) {
                 $data = [
-                    'path' => $this->imageService->upload($image['file']),
-                    'is_main' => $image['is_main'],
+                    'path' => $this->imageService->upload($image),
                 ];
 
                 $product->images()->create($data);
@@ -81,11 +81,10 @@ class ProductService
         }
 
         foreach ($images as $image) {
-           if (isset($image['file']))
+           if (isset($image))
               {
                 $data = [
-                     'path' => $this->imageService->upload($image['file']),
-                     'is_main' => $image['is_main'],
+                     'path' => $this->imageService->upload($image),
                 ];
 
                 $product->images()->create($data);

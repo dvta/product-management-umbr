@@ -8,7 +8,8 @@ class ImageService
 {
     public function upload($file)
     {
-        return Storage::disk('public')->putFile('products', $file);
+        $file = Storage::disk('public')->putFile('products', $file);
+        return url(Storage::url($file)); // get full url
     }
 
     public function delete($path)
